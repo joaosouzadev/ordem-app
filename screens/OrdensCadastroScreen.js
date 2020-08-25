@@ -11,12 +11,17 @@ import { Loading } from '../components/Loading';
 import { AuthContext } from '../contexts/AuthContext';
 import { UserContext } from '../contexts/UserContext';
 import { HeaderIconButton } from '../components/HeaderIconButton';
+import { FloatingAction } from "react-native-floating-action";
 
-export function ClientsListScreen({ navigation }) {
+export function OrdensCadastroScreen({ navigation }) {
+
   return (
     <View style={styles.container}>
       <Text>
-        Clientes
+        Nova Ordem
+      </Text>
+      <Text onPress={() => {navigation.pop()}}>
+        Voltar
       </Text>
     </View>
   );

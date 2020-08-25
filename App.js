@@ -8,7 +8,7 @@ import { LoginScreen } from './screens/LoginScreen';
 import { RegistrationScreen } from './screens/RegistrationScreen';
 import { SplashScreen } from './screens/SplashScreen';
 import { AuthStackNavigator } from './navigators/AuthStackNavigator';
-import { MainStackNavigator } from './navigators/MainStackNavigator';
+import { MainNavigator } from './navigators/MainNavigator';
 import { AuthContext } from './contexts/AuthContext';
 import { UserContext } from './contexts/UserContext';
 import { useAuth } from './hooks/useAuth';
@@ -21,7 +21,6 @@ export default function() {
 	const { auth, state } = useAuth();
 
 	function renderScreens() {
-
 		if (state.loading) {
 			return <RootStack.Screen name={'SplashScreen'} component={SplashScreen} />;
 		}
@@ -30,7 +29,7 @@ export default function() {
 			{
 				() => (
 					<UserContext.Provider value={state.user}>
-						<MainStackNavigator/>
+						<MainNavigator/>
 					</UserContext.Provider>
 				)
 			}

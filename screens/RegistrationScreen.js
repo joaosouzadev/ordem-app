@@ -22,7 +22,7 @@ export function RegistrationScreen({ navigation }) {
 
   return (
     <View style={styles.container}>
-      <IconButton style={styles.closeIcon} name={'closecircleo'} size={32} onPress={() => {
+      <IconButton style={styles.closeIcon} name={'md-close'} size={32} onPress={() => {
         navigation.pop();
       }} />
       <Heading style={styles.title}>CRIAR CONTA</Heading>

@@ -11,12 +11,31 @@ import { Loading } from '../components/Loading';
 import { AuthContext } from '../contexts/AuthContext';
 import { UserContext } from '../contexts/UserContext';
 import { HeaderIconButton } from '../components/HeaderIconButton';
+import { FloatingAction } from "react-native-floating-action";
 
-export function ClientsListScreen({ navigation }) {
+export function OrdensListScreen({ navigation }) {
+  const actions = [
+    {
+      text: "Accessibility",
+      icon: <Ionicons name="md-add" size={30} color='white' />,
+      name: "ADD",
+      position: 1
+    }
+  ];
+
   return (
     <View style={styles.container}>
+      <FloatingAction
+        actions={actions}
+        color={'purple'}
+        animated={false}
+        overrideWithAction={true}
+        onPressItem={() => {
+          navigation.navigate('CriarOrdem')}
+        }
+      />
       <Text>
-        Clientes
+        Ordens
       </Text>
     </View>
   );

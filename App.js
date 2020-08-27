@@ -1,6 +1,7 @@
 import 'react-native-gesture-handler';
 import React from 'react';
 import axios from 'axios';
+import { Provider as PaperProvider } from 'react-native-paper';
 import { NavigationContainer } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
 
@@ -26,30 +27,32 @@ export default function() {
 		}
 		return state.user ? (
 			<RootStack.Screen name={'MainStack'}>
-			{
-				() => (
-					<UserContext.Provider value={state.user}>
-						<MainNavigator/>
-					</UserContext.Provider>
-				)
-			}
+				{
+					() => (
+						<UserContext.Provider value={state.user}>
+							<MainNavigator />
+						</UserContext.Provider>
+					)
+				}
 			</RootStack.Screen>
 		) : (
-			<RootStack.Screen name={'AuthStack'} component={AuthStackNavigator} />
-		)
+				<RootStack.Screen name={'AuthStack'} component={AuthStackNavigator} />
+			)
 	}
 
 	return (
 		<AuthContext.Provider value={auth}>
-			<NavigationContainer>
-				<RootStack.Navigator
-					screenOptions={{
-						headerShown: false,
-						animationEnabled: false
-					}}>
-					{renderScreens()}
-				</RootStack.Navigator>
-			</NavigationContainer>
+			<PaperProvider>
+				<NavigationContainer>
+					<RootStack.Navigator
+						screenOptions={{
+							headerShown: false,
+							animationEnabled: false
+						}}>
+						{renderScreens()}
+					</RootStack.Navigator>
+				</NavigationContainer>
+			</PaperProvider>
 		</AuthContext.Provider>
 	);
 }

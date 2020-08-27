@@ -43,13 +43,12 @@ export function useAuth() {
 					'email': email,
 					'password': password
 				});
-				// console.log(result);
-				const user = result.data.token
+				const user = result.data
+				console.log(user);
 				SecureStore.setItemAsync('user', JSON.stringify(user));
 				dispatch(createAction('SET_USER', user));
 			},
 			logout: async () => {
-				console.log('deslogando');
 				SecureStore.deleteItemAsync('user');
 				dispatch(createAction('REMOVE_USER'));
 			},
@@ -60,7 +59,6 @@ export function useAuth() {
 					'password': password,
 					'password_confirmation': password
 				});
-				console.log('register', email, password);
 			},
 
 		}),
@@ -71,11 +69,9 @@ export function useAuth() {
 		sleep(1000).then(() => {
 			SecureStore.getItemAsync('user').then(user => {
 				if (user) {
-					console.log('a');
 					const jwtdecode = require('jwt-decode');
 					try {
 						let token = jwtdecode(user);
-						console.log(token);
 						if (typeof token.exp === 'undefined') {
 							console.log('nunca expira');
 							dispatch(createAction('SET_USER', user));
@@ -85,7 +81,7 @@ export function useAuth() {
 								console.log('expirado');
 								auth.logout();
 							} else {
-								dispatch(createAction('SET_USER', user));
+								dispatch(createAction('SET_USER', JSON.parse(user)));
 								console.log('nao expirado');
 							}
 						}

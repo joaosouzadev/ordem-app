@@ -11,18 +11,18 @@ import { Loading } from '../components/Loading';
 import { AuthContext } from '../contexts/AuthContext';
 import { UserContext } from '../contexts/UserContext';
 import { HeaderIconButton } from '../components/HeaderIconButton';
-import { FloatingAction } from "react-native-floating-action";
 
-export function OrdensCadastroScreen({ navigation }) {
+export function ExitScreen({ navigation }) {
+
+  const { logout } = React.useContext(AuthContext);
+
+  React.useEffect(() => {
+    logout();
+  }, []);
 
   return (
     <View style={styles.container}>
-      <Text>
-        Nova Ordem
-      </Text>
-      <Text onPress={() => {navigation.pop()}}>
-        Voltar
-      </Text>
+      <Text></Text>
     </View>
   );
 }

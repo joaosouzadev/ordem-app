@@ -12,12 +12,19 @@ import { AuthStackNavigator } from './navigators/AuthStackNavigator';
 import { MainNavigator } from './navigators/MainNavigator';
 import { AuthContext } from './contexts/AuthContext';
 import { UserContext } from './contexts/UserContext';
-import { useAuth } from './hooks/useAuth';
+import { useAuth } from 'hooks/useAuth';
+import { navigationRef, isReadyRef } from './RootNavigation';
 
 const RootStack = createStackNavigator();
 const AuthStack = createStackNavigator();
 
 export default function() {
+
+	React.useEffect(() => {
+		return () => {
+			isReadyRef.current = false
+		};
+	}, []);
 
 	const { auth, state } = useAuth();
 
@@ -43,7 +50,10 @@ export default function() {
 	return (
 		<AuthContext.Provider value={auth}>
 			<PaperProvider>
-				<NavigationContainer>
+				<NavigationContainer ref={navigationRef}
+					onReady={() => {
+						isReadyRef.current = true;
+					}}>
 					<RootStack.Navigator
 						screenOptions={{
 							headerShown: false,

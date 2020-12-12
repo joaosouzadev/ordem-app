@@ -106,6 +106,7 @@ export function OrdensEditScreen({ route, navigation }) {
         });
         console.log(servicos);
 
+        setEnviandoForm(false);
         setLoading(false);
       }).catch((error) => console.log(error));
 

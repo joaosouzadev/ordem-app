@@ -118,7 +118,7 @@ export function OrdensListScreen({ route, navigation }) {
               <View style={{flex: 1, alignItems: 'center', marginTop: 100, padding: 20}}>
                   <Text>Suas Ordens de Serviço aparecerão aqui.</Text>
                   <Text style={{marginTop: 20}}>
-                    <Text>Para começarmos, </Text><Text style={{textDecorationLine: 'underline'}} onPress={cadastrarCliente()}>cadastre seu primeiro cliente.</Text>
+                    <Text>Para começarmos, </Text><Text style={{textDecorationLine: 'underline'}} onPress={cadastrarCliente}>cadastre seu primeiro cliente.</Text>
                 </Text>
                   <Text style={{marginTop: 20}}>
                     <Text>Depois, clique aqui para cadastrar sua primeira Ordem.</Text>

@@ -58,9 +58,9 @@ export function RegistrationScreen({ navigation }) {
               await register(nome, email, password);
               navigation.pop();
             } catch (e) {
-              setError(e.message);
+              setError(e.response.data.message);
               setLoading(false);
-              console.log(e);
+              console.log(e.response.data);
             }
           }
         }

@@ -36,13 +36,14 @@ apiConfig.interceptors.request.use(async (config) => {
 		return config;
 	} catch (error) {
 		console.warn(error);
+		console.log(error.response);
 	}
 });
 
 apiConfig.interceptors.response.use(response => { return response }, error => {
 
-	console.log(error);
-	console.log(error.response.status);
+	console.log(error.response.data);
+	// console.log(error.response.status);
 
     if (error.response.status === 401) {
     	SecureStore.deleteItemAsync('user');

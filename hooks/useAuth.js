@@ -39,9 +39,10 @@ export function useAuth() {
 		() => ({
 
 			login: async (email, password) => {
+				console.log(email, password);
 				const result = await axios.post(`${BASE_URL}/login`, {
 					'email': email,
-					'password': password
+					'senha': password
 				});
 				const user = result.data
 				console.log(user);

@@ -12,7 +12,7 @@ export function LoginScreen({ navigation }) {
 
   const { login } = React.useContext(AuthContext);
   const [email, setEmail] = React.useState('jvms3d@gmail.com');
-  const [password, setPassword] = React.useState('asdasdasd');
+  const [password, setPassword] = React.useState('123456');
   const [loading, setLoading] = React.useState(false);
   const [error, setError] = React.useState('');
 
@@ -43,9 +43,10 @@ export function LoginScreen({ navigation }) {
               setLoading(true);
               await login(email, password);
             } catch (e) {
-              setError(e.message);
+              // console.log(e.response);
+              setError(e.response.data.message);
               setLoading(false);
-              console.log(e);
+              console.log(e.response.data);
             }
           }
         }

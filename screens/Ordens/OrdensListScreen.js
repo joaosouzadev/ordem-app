@@ -38,15 +38,15 @@ export function OrdensListScreen({ route, navigation }) {
       route.params.editou = false;
     }
 
-    console.log(route.params);
+    // console.log(route.params);
 
     apiConfig.get(`/ordens`)
       .then(({ data }) => {
         console.log(data);
-        setOrdens(data.data);
+        setOrdens(data);
         setLoading(false);
       }).catch((error) => {
-        console.log(error);
+        console.warn(error.response.data);
       })
   }, [token, route]);
 
@@ -110,7 +110,7 @@ export function OrdensListScreen({ route, navigation }) {
                   description={`${item.cliente.nome}`}
                   style={{ backgroundColor: 'white', borderBottomWidth: 0.5 }}
                   left={props => <Text style={{ textAlignVertical: 'center', width: '20%', borderRightWidth: 0.5 }}>{item.situacao}</Text>}
-                  right={props => <Text style={{ textAlignVertical: 'center', }}>R$ {item.valor.replace('.', ',') || 0}</Text>}
+                  right={props => <Text style={{ textAlignVertical: 'center', }}>R$ {item.valor?.replace('.', ',') || 0}</Text>}
                 />
               </TouchableOpacity>
             )}

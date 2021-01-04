@@ -21,7 +21,7 @@ import { useIsFocused } from '@react-navigation/native';
 import apiConfig from 'hooks/apiConfig';
 
 
-export function ClienteListScreen({ route, navigation }) {
+export function ServicoListScreen({ route, navigation }) {
 
   const { token } = React.useContext(UserContext);
 
@@ -31,7 +31,7 @@ export function ClienteListScreen({ route, navigation }) {
   const onToggleSnackBar = () => setVisible(!visible);
   const onDismissSnackBar = () => setVisible(false);
 
-  const [clientes, setClientes] = React.useState([]);
+  const [servicos, setServicos] = React.useState([]);
   React.useEffect(() => {
     if (route.params?.cadastrou || route.params?.editou) {
       setVisible(true);
@@ -42,14 +42,14 @@ export function ClienteListScreen({ route, navigation }) {
 
     console.log(route.params);
 
-    apiConfig.get(`/clientes`)
-      .then(({ data }) => {
+    apiConfig.get(`/servicos`)
+    .then(({ data }) => {
         console.log(data);
-        setClientes(data);
+        setServicos(data);
         setLoading(false);
-      }).catch((error) => {
+    }).catch((error) => {
         console.log(error);
-      })
+    })
   }, [token, route]);
 
   // console.log(clientes.length);
@@ -65,13 +65,13 @@ export function ClienteListScreen({ route, navigation }) {
   ];
 
   const editar = (id) => {
-    navigation.navigate('EditarCliente', { id: id });
+    navigation.navigate('EditarServico', { id: id });
   }
 
   return (
     <View style={styles.container}>
       <Appbar style={styles.appbar}>
-        <Appbar.Content title="Clientes" />
+        <Appbar.Content title="Serviços" />
       </Appbar>
 
       <Snackbar
@@ -86,9 +86,9 @@ export function ClienteListScreen({ route, navigation }) {
         {
           route.params ?
             route.params.cadastrou ?
-              <Text>Cliente cadastrado!</Text>
+              <Text>Serviço cadastrado!</Text>
               :
-              <Text>Cliente editado!</Text>
+              <Text>Serviço editado!</Text>
             :
             <Text></Text>
         }
@@ -100,13 +100,13 @@ export function ClienteListScreen({ route, navigation }) {
           :
           <FlatList
             extraData={refresh}
-            data={clientes}
+            data={servicos}
             keyExtractor={(item) => item.id.toString()}
             renderItem={({ item }) => (
               <TouchableOpacity onPress={() => editar(item.id)}>
                 <LL.Item
-                  title={item.nome}
-                  description={item.email}
+                  title={item.descricao}
+                  description={'R$ ' + item.valor.replace('.', ',')}
                   style={{ backgroundColor: 'white', borderBottomWidth: 0.5 }}
                   // left={props => <Text style={{ textAlignVertical: 'center', width: '20%', borderRightWidth: 0.5 }}>{item.situacao}</Text>}
                   right={props => <Entypo name="chevron-small-right" size={26} color="gray" />}
@@ -115,7 +115,7 @@ export function ClienteListScreen({ route, navigation }) {
             )}
             ListEmptyComponent={() => (
               <View style={{flex: 1, alignItems: 'center', marginTop: 100}}>
-                <Text>Não há clientes registrados</Text>
+                <Text>Não há serviços registrados</Text>
               </View>
             )}
           />
@@ -127,7 +127,7 @@ export function ClienteListScreen({ route, navigation }) {
         animated={false}
         overrideWithAction={true}
         onPressItem={() => {
-          navigation.navigate('CadastrarCliente')
+          navigation.navigate('CadastrarServico')
         }}
       />
     </View>

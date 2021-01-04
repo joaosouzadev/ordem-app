@@ -28,7 +28,7 @@ import * as WebBrowser from 'expo-web-browser';
 import * as Linking from 'expo-linking';
 import * as IntentLauncher from 'expo-intent-launcher';
 
-export function ClienteEditScreen({ route, navigation }) {
+export function ServicoEditScreen({ route, navigation }) {
 
   const actions = [
     {
@@ -50,32 +50,17 @@ export function ClienteEditScreen({ route, navigation }) {
   const [loading, setLoading] = React.useState(true);
   const [enviandoForm, setEnviandoForm] = React.useState(false);
   const [error, setError] = React.useState('');
-  const [nome, setNome] = React.useState('');
-  const [email, setEmail] = React.useState('');
-  const [celular, setCelular] = React.useState('');
-  const [cep, setCep] = React.useState('');
-  const [rua, setRua] = React.useState('');
-  const [numero, setNumero] = React.useState('');
-  const [complemento, setComplemento] = React.useState('');
-  const [bairro, setBairro] = React.useState('');
-  const [cidade, setCidade] = React.useState('');
+  const [descricao, setDescricao] = React.useState('');
+  const [valor, setValor] = React.useState('');
   const [close, setClose] = React.useState(false);
 
   React.useEffect(() => {
     setLoading(true);
-
-    apiConfig.get(`/clientes/${route.params.id}`)
+    apiConfig.get(`/servicos/${route.params.id}`)
       .then(({ data }) => {
         console.log(data);
-        setNome(data.nome);
-        setEmail(data.email);
-        setCelular(data.celular);
-        setCep(data.cep);
-        setRua(data.rua);
-        setNumero(data.numero);
-        setComplemento(data.complemento);
-        setBairro(data.bairro);
-        setCidade(data.cidade);
+        setDescricao(data.descricao);
+        setValor(data.valor);
 
         setLoading(false);
       }).catch((error) => console.log(error));
@@ -86,20 +71,13 @@ export function ClienteEditScreen({ route, navigation }) {
     setEnviandoForm(true);
     setError(null);
 
-    await apiConfig.put(`/clientes/${route.params.id}`,
+    await apiConfig.put(`/servicos/${route.params.id}`,
       {
-        'nome': nome,
-        'email': email,
-        'celular': celular,
-        'cep': cep,
-        'rua': rua,
-        'numero': numero,
-        'complemento': complemento,
-        'bairro': bairro,
-        'cidade': cidade,
+        'descricao': descricao,
+        'valor': valor,
       }).then(resp => {
         setEnviandoForm(false);
-        navigation.navigate('Clientes', { editou: true });
+        navigation.navigate('Servicos', { editou: true });
       }).catch(e => {
         console.log(e.response.data.errors);
         let stringErro = '';
@@ -117,10 +95,9 @@ export function ClienteEditScreen({ route, navigation }) {
     <ScrollView style={styles.container}>
 
       <Appbar style={styles.appbar}>
-        <Appbar.BackAction onPress={() => { navigation.navigate('Clientes'); }} />
-        <Appbar.Content title="Editar Cliente" />
+        <Appbar.BackAction onPress={() => { navigation.navigate('Servicos'); }} />
+        <Appbar.Content title="Editar Serviço" />
       </Appbar>
-      
 
       {
         loading ?
@@ -131,74 +108,17 @@ export function ClienteEditScreen({ route, navigation }) {
 
         <TextInput
           style={styles.inputRow, styles.inputRowLeft}
-          label="Nome"
-          value={nome}
-          onChangeText={setNome}
+          label="Descrição"
+          value={descricao}
+          onChangeText={setDescricao}
         />
 
-        <View style={styles.inputWrap}>
-            <TextInput
-              style={styles.inputRow, styles.inputRowLeft}
-              label="Email"
-              value={email}
-              onChangeText={setEmail}
-            />
-
-            <TextInput
-              style={styles.inputRow, styles.inputRowRight}
-              label="Celular"
-              value={celular}
-              onChangeText={setCelular}
-            />
-        </View>
-
-        <View style={styles.inputWrap}>
-            <TextInput
-              style={styles.inputRow, styles.inputRowLeft}
-              label="CEP"
-              value={cep}
-              onChangeText={setCep}
-            />
-
-            <TextInput
-              style={styles.inputRow, styles.inputRowRight}
-              label="Rua"
-              value={rua}
-              onChangeText={setRua}
-            />
-        </View>
-
-        <View style={styles.inputWrap}>
-            <TextInput
-              style={styles.inputRow, styles.inputRowLeft}
-              label="Nº"
-              value={numero}
-              onChangeText={setNumero}
-            />
-
-            <TextInput
-              style={styles.inputRow, styles.inputRowRight}
-              label="Complemento"
-              value={complemento}
-              onChangeText={setComplemento}
-            />
-        </View>
-
-        <View style={styles.inputWrap}>
-            <TextInput
-              style={styles.inputRow, styles.inputRowLeft}
-              label="Bairro"
-              value={bairro}
-              onChangeText={setBairro}
-            />
-
-            <TextInput
-              style={styles.inputRow, styles.inputRowRight}
-              label="Cidade"
-              value={cidade}
-              onChangeText={setCidade}
-            />
-        </View>
+        <TextInput
+          style={styles.inputRow, styles.inputRowLeft}
+          label="Valor"
+          value={valor}
+          onChangeText={setValor}
+        />
       </View>
       }
 

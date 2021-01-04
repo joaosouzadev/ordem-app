@@ -37,22 +37,34 @@ export function OrdensCadastroScreen({ navigation }) {
   navigation.setOptions({ tabBarVisible: false });
 
   React.useEffect(() => {
+    setLoading(false);
+  }, [navigation]);
 
-    let checkboxes = [
-        { 'id': 1, 'value': 'Formatar', 'checked': 'unchecked' },
-        { 'id': 2, 'value': 'Adicionar RAM', 'checked': 'unchecked' },
-        { 'id': 3, 'value': 'Trocar Bateria', 'checked': 'unchecked' }
-      ];
-
-    setOpcoes(checkboxes);
+  React.useEffect(() => {
 
     apiConfig.get('/clientes')
-      .then(({ data }) => {
-        setClientes(data.data);
-        setClientesMemory(data.data);
-        setLoading(false);
-      })
-      .catch((error) => console.log(error));
+    .then(({ data }) => {
+      setClientes(data);
+      setClientesMemory(data);
+      setLoading(false);
+    })
+    .catch((error) => console.log(error));
+
+    apiConfig.get(`/servicos`)
+    .then(({ data }) => {
+        console.log(data);
+        setServicos(data);
+        
+        let checkboxes = [];
+        data.forEach(servico => {
+          var obj = {'id': servico.id, 'descricao': servico.descricao, 'valor': servico.valor, 'checked': 'unchecked'}
+          checkboxes.push(obj);
+        })
+
+        setOpcoes(checkboxes);
+    }).catch((error) => {
+        console.log(error);
+    })
   }, [token]);
 
   const [situacao, setSituacao] = React.useState('Orçamento');
@@ -61,9 +73,6 @@ export function OrdensCadastroScreen({ navigation }) {
   const [dataEntrada, setDataEntrada] = React.useState('');
   const [equipamento, setEquipamento] = React.useState('');
   const [error, setError] = React.useState('');
-  const [checked, setChecked] = React.useState(false);
-  const [checked2, setChecked2] = React.useState(false);
-  const [checked3, setChecked3] = React.useState(false);
 
   const [date, setDate] = useState(new Date());
   const [mode, setMode] = useState('date');
@@ -75,13 +84,17 @@ export function OrdensCadastroScreen({ navigation }) {
     console.log(selectedDate);
     // if (selectedDate) {}
     if (event.type == 'set') {
+      var dia = selectedDate.getDate();
+      if (dia < 10) {
+        dia = '0' + dia;
+      }
       var mes = selectedDate.getMonth() + 1;
       if (mes < 10) {
         mes = '0' + mes;
       }
-      var formattedDate = selectedDate.getDate() + "-" + mes + "-" + selectedDate.getFullYear();
+      var formattedDate = dia + "/" + mes + "/" + selectedDate.getFullYear();
       setShow(Platform.OS === 'ios'); // first state update hides datetimepicker
-      setDataEntrada(formattedDate); // 30-Dec-2011());
+      setDataEntrada(formattedDate); // 30-12-2011;
       console.log(formattedDate);
     } else {
       setShow(Platform.OS === 'ios'); // first state update hides datetimepicker
@@ -144,24 +157,51 @@ export function OrdensCadastroScreen({ navigation }) {
     console.log(vetor);
   };
 
+  const resetaInputs = () => {
+    setEnviandoForm(false);
+    setCliente('');
+    setClienteNome('');
+    setEquipamento('');
+    setDataEntrada('');
+  }
+
   const cadastra = async () => {
 
     setEnviandoForm(true);
     setError(null);
 
+    var servicosVetor = [];
+    console.log('------');
+    console.log(opcoes);
+    console.log('------');
+    opcoes.forEach(opcao => {
+      console.log(opcao);
+      if (opcao.checked == 'checked') {
+        let obj = {
+          'servico': 'api/servicos/' + opcao.id,
+          'descricao': opcao.descricao,
+          'valor': opcao.valor
+        }
+        servicosVetor.push(obj);
+      }
+    });
+
+    console.log(servicosVetor);
+
     await apiConfig.post('/ordens',
       {
         'situacao': situacao,
-        'cliente_id': cliente,
-        'descricao': 'teste, remover campo descricao dps',
+        'cliente': cliente,
+        // 'descricao': 'teste, remover campo descricao dps',
         'data_entrada': dataEntrada,
         'equipamento': equipamento,
-        'valor': 99.99,
-        'servicos': servicos
+        // 'valor': 99.99,
+        'servicos': servicosVetor
       }).then(resp => {
+        resetaInputs();
         navigation.navigate('Ordens', { cadastrou: true });
       }).catch(e => {
-        console.log(e.response.data.errors);
+        console.log(e.response);
         let stringErro = '';
         Object.values(e.response.data.errors).forEach(erro => {
           Object.values(erro).forEach(str => {
@@ -244,7 +284,7 @@ export function OrdensCadastroScreen({ navigation }) {
               {
                 opcoes.map((item, idx) => {
                   return (
-                    <Checkbox.Item label={item.value} value={item.value} key={idx} status={item.checked} color='purple' onPress={() => toggleCheckbox(item)} />
+                    <Checkbox.Item label={item.descricao} value={item.id} key={idx} status={item.checked} teste={item.valor} color='purple' onPress={() => toggleCheckbox(item)} />
                   );
                 })
               }
@@ -289,7 +329,7 @@ export function OrdensCadastroScreen({ navigation }) {
                 renderItem={({ item }) => (
                   <TouchableOpacity onPress={() => {
                     setClienteNome(item.nome);
-                    setCliente(item.id.toString())
+                    setCliente('/api/clientes/' + item.id.toString())
                   }}>
                     <LL.Item
                       title={item.nome}

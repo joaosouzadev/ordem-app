@@ -16,6 +16,10 @@ import { ClienteListScreen } from 'screens/Clientes/ClienteListScreen';
 import { ClienteCadastroScreen } from 'screens/Clientes/ClienteCadastroScreen';
 import { ClienteEditScreen } from 'screens/Clientes/ClienteEditScreen';
 
+import { ServicoListScreen } from 'screens/Servico/ServicoListScreen';
+import { ServicoCadastroScreen } from 'screens/Servico/ServicoCadastroScreen';
+import { ServicoEditScreen } from 'screens/Servico/ServicoEditScreen';
+
 import { CustomDrawerContent } from 'components/CustomDrawerContent';
 import { AuthContext } from 'contexts/AuthContext';
 import { HeaderIconButton } from 'components/HeaderIconButton';
@@ -92,6 +96,14 @@ function TabNavigator({navigation, route}) {
       }}
       />
 
+			<Tab.Screen name={'Servicos'} component={ServicoListScreen}
+      options={{
+        tabBarIcon: ({ color, size }) => (
+          <AntDesign name="tool" size={size} color={color} />
+        ),
+      }}
+      />
+
       <Tab.Screen name={'Exit'} component={ExitScreen} options={{
         tabBarButton: () => null,
       }}/>
@@ -154,6 +166,8 @@ function DrawerNavigator({navigation}) {
         <Drawer.Screen name="EditarOrdem" component={OrdensEditScreen} options={navOptionHandler}/>
         <Drawer.Screen name="CadastrarCliente" component={ClienteCadastroScreen} options={navOptionHandler}/>
         <Drawer.Screen name="EditarCliente" component={ClienteEditScreen} options={navOptionHandler}/>
+        <Drawer.Screen name="CadastrarServico" component={ServicoCadastroScreen} options={navOptionHandler}/>
+        <Drawer.Screen name="EditarServico" component={ServicoEditScreen} options={navOptionHandler}/>
     </Drawer.Navigator>
   )
 }

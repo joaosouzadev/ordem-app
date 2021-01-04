@@ -63,6 +63,7 @@ export function OrdensEditScreen({ route, navigation }) {
   const [loading, setLoading] = React.useState(true);
   const [enviandoForm, setEnviandoForm] = React.useState(false);
   const [servicos, setServicos] = React.useState([]);
+  const [ordemServicos, setOrdemServicos] = React.useState([]);
   const [clientes, setClientes] = React.useState([]);
   const [clientesMemory, setClientesMemory] = React.useState([]);
 
@@ -78,45 +79,58 @@ export function OrdensEditScreen({ route, navigation }) {
   const [show, setShow] = useState(false);
 
   const [searchQuery, setSearchQuery] = React.useState('');
+  let checkboxes = [];
+
+  const getDados = async () => {
+    await apiConfig.get(`/servicos`)
+    .then(({ data }) => {
+        console.log(data);
+        setServicos(data);
+        
+        data.forEach(servico => {
+          var obj = {'id': servico.id, 'descricao': servico.descricao, 'valor': servico.valor, 'checked': 'unchecked'}
+          checkboxes.push(obj);
+        })
+
+        // console.warn(checkboxes);
+    }).catch((error) => {
+      console.log(error);
+    })
+
+    await apiConfig.get(`/ordens/${route.params.id}`)
+    .then(({ data }) => {
+      console.log(data);
+      console.log(data.cliente.id);
+      setCliente('/api/clientes/' + data.cliente.id.toString());
+      setClienteNome(data.cliente.nome);
+      setDataEntrada(data.data_entrada);
+      setEquipamento(data.equipamento);
+      
+      data.servicos.forEach(servico => {
+        // console.warn(checkboxes);
+        if (checkboxes.length > 0) {
+          checkboxes.find(obj => obj.id == servico.servico.split('/').pop()).checked = 'checked';
+        }
+      })
+
+      setOpcoes(checkboxes);
+      
+      setEnviandoForm(false);
+      setLoading(false);
+    }).catch((error) => console.log(error));
+
+    await apiConfig.get('/clientes')
+    .then(({ data }) => {
+      setClientes(data);
+      setClientesMemory(data);
+      setLoading(false);
+    }).catch((error) => console.log(error));
+  }
 
   React.useEffect(() => {
-
-    let checkboxes = [
-        { 'id': 1, 'value': 'Formatar', 'checked': 'unchecked' },
-        { 'id': 2, 'value': 'Adicionar RAM', 'checked': 'unchecked' },
-        { 'id': 3, 'value': 'Trocar Bateria', 'checked': 'unchecked' }
-      ];
-
-    setOpcoes(checkboxes);
-
-    apiConfig.get(`/ordens/${route.params.id}`)
-      .then(({ data }) => {
-        console.log(data);
-        console.log(data.data.cliente.id);
-        setCliente(data.data.cliente.id.toString());
-        setClienteNome(data.data.cliente.nome);
-        setDataEntrada(data.data.data_entrada);
-        setEquipamento(data.data.equipamento);
-
-        let srvcs = JSON.parse(data.data.servicos);
-        srvcs.forEach(servico => {
-          console.log(servico);
-          checkboxes.find(obj => obj.value === servico).checked = 'checked';
-          servicos.push(servico);
-        });
-        console.log(servicos);
-
-        setEnviandoForm(false);
-        setLoading(false);
-      }).catch((error) => console.log(error));
-
-    apiConfig.get('/clientes')
-      .then(({ data }) => {
-        setClientes(data.data);
-        setClientesMemory(data.data);
-        // setLoading(false);
-      }).catch((error) => console.log(error));
-
+    setLoading(true);
+    resetaInputs();
+    getDados();
   }, [route, navigation]);
 
   const onChange = (event, selectedDate) => {
@@ -183,22 +197,47 @@ export function OrdensEditScreen({ route, navigation }) {
     console.log(vetor);
   };
 
+  const resetaInputs = () => {
+    setEnviandoForm(false);
+    // setCliente('');
+    // setClienteNome('');
+    setEquipamento('');
+    setDataEntrada('');
+  }
+
   const edita = async () => {
 
     setEnviandoForm(true);
     setError(null);
 
+    var servicosVetor = [];
+    console.log('------');
+    console.log(opcoes);
+    console.log('------');
+    opcoes.forEach(opcao => {
+      console.log(opcao);
+      if (opcao.checked == 'checked') {
+        let obj = {
+          'servico': 'api/servicos/' + opcao.id,
+          'descricao': opcao.descricao,
+          'valor': opcao.valor
+        }
+        servicosVetor.push(obj);
+      }
+    });
+
+    console.log(servicosVetor);
+
     await apiConfig.put(`/ordens/${route.params.id}`,
       {
         'situacao': situacao,
         'cliente': cliente,
-        'descricao': 'ATUALIZANDO',
         'data_entrada': dataEntrada,
         'equipamento': equipamento,
-        'valor': 11.11,
-        'servicos': servicos
+        'servicos': servicosVetor
       }).then(resp => {
         setEnviandoForm(false);
+        resetaInputs();
         navigation.navigate('Ordens', { editou: true });
       }).catch(e => {
         console.log(e.response.data.errors);
@@ -329,7 +368,7 @@ export function OrdensEditScreen({ route, navigation }) {
                   {
                     opcoes.map((item, idx) => {
                       return (
-                        <Checkbox.Item label={item.value} value={item.value} key={idx} status={item.checked} color='purple' onPress={() => toggleCheckbox(item)} />
+                        <Checkbox.Item label={item.descricao} value={item.id} key={idx} status={item.checked} teste={item.valor} color='purple' onPress={() => toggleCheckbox(item)} />
                       );
                     })
                   }
